@@ -438,6 +438,11 @@ router.post('/chat-process', [auth, limiter], async (req, res) => {
         }
         if (chat.detail && chat.detail.choices.length > 0)
           chuck.detail.choices[0].finish_reason = chat.detail.choices[0].finish_reason
+         // 判断是否应该停止对话
+         if (chat.detail.choices[0].finish_reason === 'stop') {
+          res.end(); // 结束响应
+          return; // 退出处理函数
+        }
 
         res.write(firstChunk ? JSON.stringify(chuck) : `\n${JSON.stringify(chuck)}`)
         firstChunk = false
